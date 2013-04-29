@@ -1,0 +1,105 @@
+#music-player-container{
+	background: #45484d; /* Old browsers */
+
+	background: -moz-linear-gradient(top,  #45484d 0%, #000000 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#45484d), color-stop(100%,#000000)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #45484d 0%,#000000 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #45484d 0%,#000000 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #45484d 0%,#000000 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #45484d 0%,#000000 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
+	XImageTransform.Microsoft.gradient( startColorstr='#7d7e7d', endColorstr='#0e0e0e',GradientType=0 ); /* IE6-9 */
+
+	background: #272727;
+
+
+	height: 55px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	position: fixed;
+	color:white;
+}
+
+
+#play-controls{
+	margin-left: 35%;
+	width: 100px;
+	padding: 4px
+}
+
+#play-controls a{
+	float: left;
+}
+
+#slider-wrapper{
+	width: 260px;
+	height: 20px;
+	float: left;
+	margin-left: 10px;
+	padding: 5px;
+}
+
+#progress-slider{
+	margin-top: 12px;
+}
+
+#player-options{
+	float: left;
+	margin-left: 10px;
+}
+
+#song-name{
+	font-size: 0.8em;
+	position: absolute;
+	margin-top: -12px;
+	font-weight: bold;
+}
+
+#volumen-slide{
+	position: absolute;
+	top: -95px;
+	margin-left: 7px;
+	display: none;
+}
+
+
+#song-time{
+	font-size: 0.8em;
+	float: right;
+	margin-top: -12px;
+}
+
+
+/***** ICONS *****/
+.player-icon{
+	background: url("../img/iconsPlayer.png");
+	width: 30px;
+	height: 30px;
+	display: block;
+}
+
+#play-pause{
+	background-position: -150px 0px;
+}
+
+#play-pause.playing {
+	background-position: -210px 0px;
+}
+
+#play-prev {
+	background-position: -60px 0px;
+}
+
+#play-next {
+	background-position: -330px 0px;
+}
+
+#player-volumen {
+	background-position: 0px -30px;
+	margin-top: -5px;
+}
+
+#player-volumen.mute {
+	background-position: 30px -30px;
+}
