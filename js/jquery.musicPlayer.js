@@ -4,7 +4,8 @@
 
 		var defaults = {
 			autoplay: false,
-			loop: false
+			loop: false,
+			shuffle: false
 		}
 
 		var settings = $.extend({}, defaults, options);
@@ -23,14 +24,15 @@
 		var sliderWrap = 
 			'<div id="slider-wrapper">' +
 				'<span id="song-name">namesong </span>' +
-				'<span id="song-time"><span id="current-time">00:00</span> / <span id="song-duration">00:00</span></span>' +
+				'<span id="song-time"><span id="current-time">0:00</span> / <span id="song-duration">00:00</span></span>' +
 				'<div id="progress-slider"></div>' +
+				'<img src="img/loading.gif" id="loading" style="display:none">'+
 			'</div>';
 
 		var playerOptions = 
 			'<div id="player-options">' +
 				'<div id="wrapper-volumen">' +
-					'<div id="volumen-slide"></div>' +
+					'<div id="volumen-slider" style="position: absolute;top: -95px;margin-left: 7px;"></div>' +
 					'<a id="player-volumen" class="player-icon"></a>' +
 				'</div>' + 
 			'</div>';
@@ -41,147 +43,180 @@
 		})
 		.appendTo("body");
 
-
-		var currentSong,
-			audioTag,
-			nextPrevPressed,
-			intervalSlider,
-			arraySongs = []
-		;
-
-
-		/** create audio tag and insert into DOM*/
-
-		function createAudioTag(sourceAudio){
-			// remove and create current audio tag, neccesary to load other song
-
-			$("#audio-tag").remove();
-
-			var audio = document.createElement("audio");
-			var srcAudio = document.createElement("source");
-
-			srcAudio.setAttribute("src",sourceAudio);
-
-			audio.id = "audio-tag";
-			audio.appendChild(srcAudio);
-			document.body.appendChild(audio);
-
-			//audio.play();
-			audioTag = $("#audio-tag")[0];
-			
-			initMetaData();
-			
-
-		}
-
-		function initMetaData(){
-
-			setTimeout(function(){
-				musicPlayer.elements.songDuration
-					.text(getTimeSong(audioTag.duration));
-				setCurrentTime();
-				initSliderProgress();
-				initVolumenSlider();
-				
-			},1000);
-
-			/** 
-			 //if config autoplay is true play after load, 
-			 //or play if next or prev button are pressed 
-			*/
-			if(settings.autoplay || nextPrevPressed){
-				audioTag.play();
-				updateSlider();
-			}
-		}
-
-
-		/** init jquery ui slider */
-
-		function initSliderProgress(){
-			$("#progress-slider").slider({     
-				range: "min",
-				min: 0,
-				max: audioTag.duration,
-				value: 0,
-				change: function(e, ui){		
-			    	if(e.eventPhase){
-			    		/** if change the progress slider change the audio currentTime value*/
-			    		setSlider(ui.value);
-			    	}	
-				}
-			});
-
-		}
-
-		function updateSlider(){
-			intervalSlider = setInterval(function(){
-				var currentTime = musicPlayer.elements.progressSlider.slider("option","value");
-				musicPlayer.elements.progressSlider
-					.slider( "option", "value", currentTime + 1);
-			},1000);
-		}
-
-		function setSlider(currentTime){
-			audioTag.currentTime = currentTime;
-		}
-
-		function initVolumenSlider(){
-			$("#volumen-slide").slider({
-		    	orientation: "vertical",
-		    	range: "min",
-		    	min: 0,
-		   		max: 1,
-		    	value: 10,
-		    	step: 0.1,
-		    	change: function(event, ui){
-		    		audioTag.volume = ui.value;
-		    	}
-
-			});
-		}
-
 		
+
+		var arraySongs = [];
+		var currentSong;
+		var intervalProgress;
+		var nextPrevPressed = false;
+		var playing = false;
+		var progresSlider = $("#progress-slider");
+		var volumen = true;
+
 		function getFirstAudioSrc(){
 			$.each(options.sourceAudio,function(index,val){
 				if(index === 0){
 					currentSong = val.src;		
 				}
-				arraySongs.push(val.src);
+
+				arraySongs.push(val.src);		
 			});
-
 		}
 
-		function getTimeSong(audioTagDuration){
-			var minutes = Math.floor(audioTagDuration / 60);
-			var seconds  = Math.floor(audioTagDuration  - minutes * 60);
-			if(seconds < 10){
-				seconds = "0" + seconds;
+		function createAudio(){
+			soundManager.setup({
+				url: 'swf/',
+			  	// optional: use 100% HTML5 mode where available
+			  	preferFlash: false,
+			  	onready: function() {
+			    	var mySound = soundManager.createSound({
+			      		id: 'aSound',
+			      		url: currentSong,
+
+			      		onload:function(){  		
+			    			musicPlayer.setDurationSong(convertMS(this.duration));
+			    			var that = this;
+
+			    			musicPlayer.elements.loading.hide();
+
+			    			/** INIT JQUERY UI SLIDER*/
+			    			initSliderSong(that);
+
+			    			if(localStorage.volumen == 0){
+			    				soundManager.setVolume('aSound',0);
+			    		
+			    			}else{
+			    				soundManager.setVolume('aSound',getCurrentVolumenStorage());
+			    			}
+
+			    			
+
+			    			
+			    		},
+			    		onfinish:function() {
+			    			// play next song in the queue
+			  				musicPlayer.handlerNextSong("next");
+				  	 	}
+			    	});
+			    	
+			    	if(settings.autoplay || nextPrevPressed){
+			    		progresSlider.hide();	    		
+			    		musicPlayer.elements.loading.show();
+			    		mySound.play();
+			    		musicPlayer.controls.playPause.addClass("playing")
+			    	} 
+			  	},
+			  	ontimeout: function() {
+			    // Hrmm, SM2 could not start. Missing SWF? Flash blocked? Show an error, etc.?
+			  	}
+			});
+		}	
+
+		function convertMS(ms) {
+			var d, h, m, s;
+		  	s = Math.floor(ms / 1000);
+		  	m = Math.floor(s / 60);
+		  	s = s % 60;
+		  	h = Math.floor(m / 60);
+		  	m = m % 60;
+		  	d = Math.floor(h / 24);
+		  	h = h % 24;
+		  	//return { d: d, h: h, m: m, s: s };
+		  	if(s < 10){
+				s = "0" + s;
 			}
-			return minutes  + ":" + seconds;
+			return m  + ":" + s;
+		};
 
+
+		function initSliderSong(that){
+			progresSlider.slider({     
+				range: "min",
+				min: 0,
+				max:that.duration,
+				value: 1,
+				step:0.1,
+				change: function(e, ui){		
+					if(e.eventPhase){
+						soundManager.setPosition('aSound',ui.value);
+					}	
+				}
+			}).show();
+
+			setIntervalSong(that);
 		}
 
-		function setCurrentTime(){
-	
-			var currentInterval = setInterval(function(){
+		function setIntervalSong(that){
+			intervalProgress = setInterval(function(){
+				console.log("interval")
+		  	  	progresSlider
+					.slider( "option", "value", that.position);
+
+				// setCurrent time song
 				musicPlayer.elements.currentTime
-					.text(getTimeSong(audioTag.currentTime));
+					.text(convertMS( that.position));
+		  	},1000);
+		}
 
-				/** check for end song and play next*/
-				musicPlayer.playNextSongQueue();
-			},1000);
+		function initVolumenSlider(){
+			$("#volumen-slider").slider({
+		    	orientation: "vertical",
+		    	range: "min",
+		    	min: 0,
+		   		max: 100,
+		    	value: getCurrentVolumenStorage(),
+		    	step: 10,
+		    	change: function(event, ui){
+		    		soundManager.setVolume('aSound',ui.value);
+		    		localStorage.currentVolumen = ui.value;
+		    		localStorage.volumen = 1;
+		    		musicPlayer.controls.muteVolumen.removeClass("mute");
+		    	}
+
+			});
+		}
+
+		function resetAudio(){
+			soundManager.destroySound('aSound');
+			nextPrevPressed = true;
+			clearInterval(intervalProgress);
+			createAudio();
+			musicPlayer.setNameSongPlayer(currentSong);
+		}
+
+		function supportStorage(){
+			try{
+				return 'localStorage' in window && window.localStorage !== null;
+			}catch(e){
+				return false;
+			}
 		}
 
 
-		getFirstAudioSrc();	
-		createAudioTag(currentSong);
+		function setMute(){
+			if(supportStorage()){
+				if(localStorage.volumen == 0){
+					musicPlayer.controls.muteVolumen.addClass("mute");
+					volumen = false;
+						
+				}
+			}
+		}
 
-		
+		function getCurrentVolumenStorage(){
+			return localStorage.currentVolumen ? localStorage.currentVolumen : 100;
+		}
 
 
-		var musicPlayer = {
 
+
+		getFirstAudioSrc()
+		createAudio();
+		initVolumenSlider();
+	
+		/** MUSIC PLAYER  */º
+
+		musicPlayer = {
 			controls:{
 				playPause: $("#play-pause"), 
 				next: $("#play-next"),
@@ -194,37 +229,69 @@
 				songName: $("#song-name"),
 				songDuration: $("#song-duration"),
 				currentTime: $("#current-time"),
-				progressSlider: $("#progress-slider"),
 				wrapVolumen: $("#wrapper-volumen"),
-				volumenSlider: $("#volumen-slide")
+				volumenSlider: $("#volumen-slider"),
+				loading: $("#loading")
 			},
-
-			/** handlers */
 
 			playPause:function(){
 				musicPlayer.controls.playPause.on("click",function(e){
 					e.preventDefault();
 					var that = $(this);
+					console.log(soundManager.position)
 
 					if(!that.hasClass("playing")){
 						that.addClass("playing");
-						audioTag.play();
-						updateSlider();
+						soundManager.play("aSound");
+						//clearInterval(intervalProgress);
 					}else{
 						that.removeClass("playing");
-						audioTag.pause();
-						// stop update interval slider
-						clearInterval(intervalSlider);
+						soundManager.pause("aSound");
+						//clearInterval(intervalProgress);
+		
 					}
-					
-					
+							
+				});
+			},
+
+			setNameSongPlayer: function(){
+				musicPlayer.elements.songName.text(currentSong);		
+			},
+
+			setDurationSong:function(duration){
+				musicPlayer.elements.songDuration.text(duration);
+			},
+
+			setVolumenSlider: function(){
+				musicPlayer.elements.wrapVolumen.hover(function(){
+					musicPlayer.elements.volumenSlider.show();
+				},function(){
+					musicPlayer.elements.volumenSlider.hide();
+				});
+			},
+
+			muteVolumen:function(){
+				musicPlayer.controls.muteVolumen.on("click",function(e){
+					e.preventDefault();
+					var that = $(this);
+
+					if(!that.hasClass("mute")){
+						that.addClass("mute");
+						soundManager.setVolume('aSound',0);
+						localStorage.volumen = 0;
+					}else{
+						that.removeClass("mute");
+						soundManager.setVolume('aSound',100);
+						localStorage.volumen = 1;
+
+					}		
 				});
 			},
 
 			playNextSong:function(){
 				musicPlayer.controls.next.on("click",function(e){
 					e.preventDefault();
-					musicPlayer.handlerNextSong("next");
+					musicPlayer.handlerNextSong("next");	
 				});
 			},
 
@@ -236,6 +303,7 @@
 			},
 
 			handlerNextSong:function(type){
+
 				for(var i = 0; i < arraySongs.length; i++ ){
 					if(currentSong === arraySongs[i]){
 
@@ -243,89 +311,43 @@
 							if(arraySongs[i + 1] === undefined){
 								if(settings.loop){
 									currentSong = arraySongs[0];
+									resetAudio();
 									break;
 								}else{
 									return;
 								}
-								
 							}else{
 								currentSong = arraySongs[i + 1];
-								break;
+								resetAudio();
+								break;	
 							}
-							
+									
 						}else if(type === "prev"){
 							if(arraySongs[i - 1] === undefined) return;
 							currentSong = arraySongs[i - 1];
+							resetAudio();
 							break;
 						}		
 					}
 				}
-
-				audioTag.pause();
-				clearInterval(intervalSlider);
-	
-				musicPlayer.controls.playPause.addClass("playing");
-				nextPrevPressed = true;
-				musicPlayer.setNameSongPlayer();
-				createAudioTag(currentSong);
-			},
-
-			playNextSongQueue: function(){
-				if(audioTag.ended){
-					musicPlayer.handlerNextSong("next");
-				}
 				
 			},
 
-			muteVolumen:function(){
-				musicPlayer.controls.muteVolumen.on("click",function(e){
-					e.preventDefault();
-					var that = $(this);
-
-					if(!that.hasClass("mute")){
-						that.addClass("mute");
-						audioTag.volume = 0;
-					}else{
-						that.removeClass("mute");
-						audioTag.volume = 1;	
-					}		
-				});
-			},
-
-			setVolumenSlider: function(){
-				musicPlayer.elements.wrapVolumen.hover(function(){
-					musicPlayer.elements.volumenSlider.show();
-				},function(){
-					musicPlayer.elements.volumenSlider.hide();
-				});
-			},
-
-
-
-			/** elements */
-
-			setNameSongPlayer: function(){
-				musicPlayer.elements.songName.text(currentSong);		
-			},
-
-
-
-			/** intitialize */
-			init:function(){
+			init: function(){
 				this.playPause();
 				this.setNameSongPlayer();
+				this.setVolumenSlider();
+				this.muteVolumen();
 				this.playNextSong();
 				this.playPrevSong();
-				this.muteVolumen();
-				this.setVolumenSlider();
-				this.playNextSongQueue();
+				
+				setMute();	
+				
+
 			}
-
-
 		}
 
 		musicPlayer.init();
-		
 	}
 
 })(jQuery)
