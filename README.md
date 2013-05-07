@@ -13,11 +13,13 @@ put styles in the header
 	<link href="http://code.jquery.com/ui/1.10.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
 ```
 
-load javascript after jquery
+load javascript after close body tag
 ```html	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="js/jquery.musicPlayer.js"></script>	
 ```
+
+and copy the folder swf in your project ( for fallback flash if html5 audio is not supported )
 
 ## Examples
 
@@ -29,7 +31,8 @@ load javascript after jquery
 			{ src : "audio/song2.mp3"},
 		],
 		autoplay:true,
-		loop: true
+		loop: true,
+		position: "#music-player" // default bottom of the page
 		
 	});	
 	
