@@ -85,14 +85,15 @@ G);s.add(k,"load",sa);n.addEventListener?n.addEventListener("DOMContentLoaded",H
 
 		var defaults = {
 			autoplay: false,
-			loop: false
+			loop: false,
+			position: "bottom"
 		}
 
-		var settings = $.extend({}, defaults, options);
+		var settings = $.extend({}, defaults, options);	
 		
 		/** create music player container and append to page*/
 
-		
+		var musicPlayerContainer = $("<div id='music-player-container'>");
 
 		var playControls =
 			'<div id="play-controls">' +
@@ -118,11 +119,22 @@ G);s.add(k,"load",sa);n.addEventListener?n.addEventListener("DOMContentLoaded",H
 				'</div>' + 
 			'</div>';
 
-		$("<div/>",{
-			"id" : "music-player-container",
-			html: playControls + sliderWrap + playerOptions
-		})
-		.appendTo("body");
+
+		var player = musicPlayerContainer
+						.html(playControls + sliderWrap + playerOptions)
+		
+		if(settings.position === "bottom"){
+			player.appendTo("body")	
+		}else{
+			player.appendTo($(settings.position))
+			$("#music-player-container").css({
+				"height": "45px",
+				"padding": "6px",
+				"position": "relative"
+			});
+			$("#play-controls").css("margin-left", "0%");
+			$("#volumen-slider").css("top","-90px");
+		}
 
 		//************************************
 		var arraySongs = [];
@@ -342,12 +354,9 @@ G);s.add(k,"load",sa);n.addEventListener?n.addEventListener("DOMContentLoaded",H
 					if(!that.hasClass("playing")){
 						that.addClass("playing");
 						soundManager.play("aSound");
-						//clearInterval(intervalProgress);
 					}else{
 						that.removeClass("playing");
-						soundManager.pause("aSound");
-						//clearInterval(intervalProgress);
-		
+						soundManager.pause("aSound");		
 					}
 							
 				});

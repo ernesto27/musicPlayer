@@ -6,6 +6,18 @@
 		<link href="http://code.jquery.com/ui/1.10.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
 	
 		<link rel="stylesheet" type="text/css" href="css/styles.css">
+
+		<style type="text/css">
+			#music-player{
+				width: 520px;
+				margin-top: 200px;
+				border: solid 1px;
+				padding: 15px;
+			}
+
+
+
+		</style>
 	</head>
 	
 	<body>
@@ -14,6 +26,8 @@
 			<h2>Test music player page</h2>
 
 			<div id="init-musicPlayer"></div>
+
+			<div id="music-player"></div>
 		</div>
 
 
@@ -32,7 +46,8 @@
 					{ src : "audio/too.mp3"}
 				],
 				autoplay:false,
-				loop: true
+				loop: true,
+				position: "#music-player"
 			});
 		</script>
 
