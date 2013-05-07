@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Musicplayer by ernesto27</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/ernesto27/musicPlayer">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/ernesto27/musicPlayer/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/ernesto27/musicPlayer/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Musicplayer</h1>
+          <p>jquery musicPlayer plugin</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/ernesto27">ernesto27</a></span>
+        </div>
+
+
+
+<h3>Install</h3>
+
+<p>put styles in the header</p>
+
+<pre>
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <link href="http://code.jquery.com/ui/1.10.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
+</pre>
+
+<p>load javascript files above the closing body tag</p>
+
+
+<pre>
+ <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery.musicPlayer.js"></script> 
+</pre>
+
+<h3>Examples</h3>
+
+<pre>
+  $(document).musicPlayer({
+        sourceAudio: [
+            { src : "audio/song1.mp3"},
+            { src : "audio/song2.mp3"},
+        ],
+        autoplay:true,
+        loop: true,
+        position: "#music-player" // default bottom of the page
+
+    });
+
+</pre>
+
+<h3>Options</h3>
+<p>autoplay -> Play after load page</p>
+<p>loop -> loop songs</p>
+
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
