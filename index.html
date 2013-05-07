@@ -43,32 +43,32 @@
 
 <p>put styles in the header</p>
 
-<pre>
-  <link rel="stylesheet" type="text/css" href="css/styles.css">
-  <link href="http://code.jquery.com/ui/1.10.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
-</pre>
+
+<link rel="stylesheet" type="text/css" href="css/styles.css">
+<link href="http://code.jquery.com/ui/1.10.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
+
 
 <p>load javascript files above the closing body tag</p>
 
 
-<pre>
- <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="js/jquery.musicPlayer.js"></script> 
-</pre>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="js/jquery.musicPlayer.js"></script> 
+
 
 <h3>Examples</h3>
 
 <pre>
-  $(document).musicPlayer({
-        sourceAudio: [
-            { src : "audio/song1.mp3"},
-            { src : "audio/song2.mp3"},
-        ],
-        autoplay:true,
-        loop: true,
-        position: "#music-player" // default bottom of the page
+$(document).musicPlayer({
+  sourceAudio: [
+    { src : "audio/song1.mp3"},
+    { src : "audio/song2.mp3"},
+  ],
+  autoplay:true,
+  loop: true,
+  position: "#music-player" // default bottom of the page
 
-    });
+});
 
 </pre>
 
