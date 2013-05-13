@@ -25,7 +25,7 @@ and copy the folder swf in your project ( for fallback flash if html5 audio is n
 
 ```javascript
 
-	$(document).musicPlayer({
+	$.musicPlayer({
 		sourceAudio: [
 			{ src : "audio/song1.mp3"},
 			{ src : "audio/song2.mp3"},
