@@ -81,7 +81,7 @@ G);s.add(k,"load",sa);n.addEventListener?n.addEventListener("DOMContentLoaded",H
 
 ;(function($){
 
-	$.fn.musicPlayer = function(options){
+	$.musicPlayer = function(options){
 
 		var defaults = {
 			autoplay: false,
