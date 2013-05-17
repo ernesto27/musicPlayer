@@ -13,7 +13,7 @@ put styles in the header
 	<link href="http://code.jquery.com/ui/1.10.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
 ```
 
-load javascript after close body tag
+load javascript before close body tag 
 ```html	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="js/jquery.musicPlayer.js"></script>	
@@ -47,3 +47,7 @@ Play after load page
 
 ### loop
 loop over songs
+
+### position
+ a jquery element selector ( ej "a", ".className", "#myDiv")
+ default put music player at bottom of the page
