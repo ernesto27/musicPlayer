@@ -108,7 +108,7 @@ G);s.add(k,"load",sa);n.addEventListener?n.addEventListener("DOMContentLoaded",H
 				'<span id="song-name">namesong </span>' +
 				'<span id="song-time"><span id="current-time">0:00</span> / <span id="song-duration">00:00</span></span>' +
 				'<div id="progress-slider"></div>' +
-				'<img src="img/loading.gif" id="loading" style="display:none">'+
+				'<img src="img/loading.gif" id="loading-music-player" style="display:none">'+
 			'</div>';
 
 		var playerOptions = 
@@ -136,7 +136,7 @@ G);s.add(k,"load",sa);n.addEventListener?n.addEventListener("DOMContentLoaded",H
 			$("#volumen-slider").css("top","-90px");
 		}
 
-		//************************************
+
 		var arraySongs = [];
 		var currentSong;
 		var intervalProgress;
@@ -178,7 +178,7 @@ G);s.add(k,"load",sa);n.addEventListener?n.addEventListener("DOMContentLoaded",H
 
 			    			if(localStorage.volumen == 0){
 			    				soundManager.setVolume('aSound',0);
-			    				console.log("mute volumen")
+			    		
 			    			}else{
 			    				soundManager.setVolume('aSound',getCurrentVolumenStorage());
 			    			}		
@@ -242,7 +242,7 @@ G);s.add(k,"load",sa);n.addEventListener?n.addEventListener("DOMContentLoaded",H
 
 		function setIntervalSong(that){
 			intervalProgress = setInterval(function(){
-				console.log("interval")
+			
 		  	  	progresSlider
 					.slider( "option", "value", that.position);
 
@@ -342,14 +342,14 @@ G);s.add(k,"load",sa);n.addEventListener?n.addEventListener("DOMContentLoaded",H
 				currentTime: $("#current-time"),
 				wrapVolumen: $("#wrapper-volumen"),
 				volumenSlider: $("#volumen-slider"),
-				loading: $("#loading")
+				loading: $("#loading-music-player")
 			},
 
 			playPause:function(){
 				musicPlayer.controls.playPause.on("click",function(e){
 					e.preventDefault();
 					var that = $(this);
-					console.log(soundManager.position)
+				
 
 					if(!that.hasClass("playing")){
 						that.addClass("playing");
@@ -468,8 +468,7 @@ G);s.add(k,"load",sa);n.addEventListener?n.addEventListener("DOMContentLoaded",H
 				this.muteVolumen();
 				this.playNextSong();
 				this.playPrevSong();
-				this.shuffleSongs();
-				
+				this.shuffleSongs();	
 				setMute();	
 			}
 		}
